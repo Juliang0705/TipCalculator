@@ -21,7 +21,14 @@ class SettingView: FXBlurView {
     @IBOutlet var defaultTipSegments: UISegmentedControl!
     
     
-    
+    @IBAction func defaultTipChanged(sender: UISegmentedControl) {
+        let index:Int = sender.selectedSegmentIndex
+        // minimal tip is 10% and increment by 5%
+        let value:Int = 10 + 5 * index
+        let defaults = NSUserDefaults.standardUserDefaults()
+            defaults.setInteger(value, forKey: "tip")
+            defaults.synchronize()
+    }
     func setup () {
         panGestureRecognizer = UIPanGestureRecognizer(target: self, action: "handlePan:")
         panGestureRecognizer.cancelsTouchesInView = false

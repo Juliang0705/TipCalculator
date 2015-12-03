@@ -17,7 +17,10 @@ class ViewController: UIViewController,UITextFieldDelegate {
     @IBOutlet var totalLabel: UILabel!
     @IBOutlet var tipSegments: UISegmentedControl!
     var settings:SettingView!
-
+    
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         amountTextField.delegate = self
@@ -28,6 +31,11 @@ class ViewController: UIViewController,UITextFieldDelegate {
         settings.frame = CGRectMake(0, -self.view.frame.size.height + 40, self.view.frame.size.width, self.view.frame.size.height)
         self.view.addSubview(settings)
         settings.setup()
+        let defaults = NSUserDefaults.standardUserDefaults()
+        var defaultTip:Int = defaults.integerForKey("tip")
+        var segmentIndex:Int = (defaultTip - 10) / 5
+        tipSegments.selectedSegmentIndex = segmentIndex
+        tipSegments.sendAction("tipSegmentsValueChanged:", to: self, forEvent: nil)
     }
 
     override func didReceiveMemoryWarning() {
@@ -39,9 +47,9 @@ class ViewController: UIViewController,UITextFieldDelegate {
         let amount:Double = (amountTextField.text as NSString).doubleValue
         let percentage:Double = (tipPercentageLabel.text! as NSString).doubleValue
         let tip:Double = amount * percentage / 100
-        tipAmountLabel.text = String(format:"%.2f", tip)
+        tipAmountLabel.text = "$ " + String(format:"%.2f", tip)
         let total:Double = (amountTextField.text as NSString).doubleValue + tip
-        totalLabel.text = String(format:"%.2f",total)
+        totalLabel.text = "$ " + String(format:"%.2f",total)
     }
     @IBAction func amountEditing(sender: UITextField) {
         // make sure the dot only appears at most once
