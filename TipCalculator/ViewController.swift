@@ -17,11 +17,10 @@ class ViewController: UIViewController,UITextFieldDelegate {
     @IBOutlet var totalLabel: UILabel!
     @IBOutlet var tipSegments: UISegmentedControl!
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         amountTextField.delegate = self
-        amountTextField.keyboardType = UIKeyboardType.NumberPad
+        amountTextField.keyboardType = UIKeyboardType.DecimalPad
         amountTextField.textAlignment = NSTextAlignment.Right
         amountTextField.becomeFirstResponder()
     }
@@ -31,34 +30,42 @@ class ViewController: UIViewController,UITextFieldDelegate {
         // Dispose of any resources that can be recreated.
     }
     @IBAction func amountEditing(sender: UITextField) {
-        var number:String = sender.text
-        var length:Int = (number as NSString).length
-        switch length{
-            case 0:
-                number = "0.00"
-            case 1:
-                number = "0.0" + number
-          //  case 2:
-          //      number = "0." + number
-            default:
-                number.removeAtIndex(advance(number.endIndex,-2))
-                number.insert(".", atIndex: advance(number.endIndex,-2))
+        // make sure the dot only appears at most once
+        var dotCount:Int = 0
+        for c in Array(amountTextField.text) {
+            println(c)
+            if (c == "."){
+                dotCount += 1
+            }
         }
-        sender.text = number
+        if (dotCount > 1){
+            amountTextField.text.removeAtIndex(amountTextField.text.endIndex.predecessor())
+            return
+        }
+        // do the calculation
+        let amount:Double = (amountTextField.text as NSString).doubleValue
+        let percentage:Double = (tipPercentageLabel.text! as NSString).doubleValue
+        let tip:Double = amount * percentage / 100
+        tipAmountLabel.text = String(format:"%.2f", tip)
+        let total:Double = (amountTextField.text as NSString).doubleValue + tip
+        totalLabel.text = String(format:"%.2f",total)
     }
+    
     @IBAction func tipSliderValueChanged(sender: UISlider) {
-        let value:Int = Int(sender.value)
+        let value:Int = Int(tipSlider.value)
         tipPercentageLabel.text = String(value) + "%";
+        // unselect the tip segment to avoid confusion
+        tipSegments.selectedSegmentIndex = -1
     }
     @IBAction func tipSegmentsValueChanged(sender: UISegmentedControl) {
-        let index:Int = sender.selectedSegmentIndex
+        let index:Int = tipSegments.selectedSegmentIndex
         // minimal tip is 10% and increment by 5%
         let value:Int = 10 + 5 * index
         tipSlider.setValue(Float(value), animated: true)
         tipSlider.sendAction("tipSliderValueChanged:", to: self, forEvent: nil)
+        // select the tip segment
+        tipSegments.selectedSegmentIndex = index
     }
-    
-
 
 }
 
