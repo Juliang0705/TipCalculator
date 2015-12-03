@@ -22,8 +22,9 @@ class SettingView: FXBlurView {
     
     
     @IBAction func defaultTipChanged(sender: UISegmentedControl) {
+        // save the data here
         let index:Int = sender.selectedSegmentIndex
-        // minimal tip is 10% and increment by 5%
+        // minimal tip is 10% and incremented by 5%
         let value:Int = 10 + 5 * index
         let defaults = NSUserDefaults.standardUserDefaults()
             defaults.setInteger(value, forKey: "tip")

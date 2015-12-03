@@ -17,8 +17,7 @@ class ViewController: UIViewController,UITextFieldDelegate {
     @IBOutlet var totalLabel: UILabel!
     @IBOutlet var tipSegments: UISegmentedControl!
     var settings:SettingView!
-    
-    
+    let userData = NSUserDefaults.standardUserDefaults()
     
     
     override func viewDidLoad() {
@@ -31,13 +30,30 @@ class ViewController: UIViewController,UITextFieldDelegate {
         settings.frame = CGRectMake(0, -self.view.frame.size.height + 40, self.view.frame.size.width, self.view.frame.size.height)
         self.view.addSubview(settings)
         settings.setup()
-        let defaults = NSUserDefaults.standardUserDefaults()
-        var defaultTip:Int = defaults.integerForKey("tip")
+        self.setup()
+    }
+    func setup(){
+        //restore the default tip
+        var defaultTip:Int = userData.integerForKey("tip")
         var segmentIndex:Int = (defaultTip - 10) / 5
         tipSegments.selectedSegmentIndex = segmentIndex
         tipSegments.sendAction("tipSegmentsValueChanged:", to: self, forEvent: nil)
+        //restore old amount
+        if let previousDate = userData.objectForKey("time") as? NSDate{
+            let elapsedTime = Int(NSDate().timeIntervalSinceDate(previousDate))
+            if elapsedTime <= 3600{
+                if let amount = userData.objectForKey("amount") as? String{
+                    amountTextField.text = amount
+                }
+            }
+        }
+        calculateTips()
+        
     }
-
+    func saveUserData(){
+        userData.setObject(amountTextField.text, forKey: "amount")
+        userData.setObject(NSDate(), forKey: "time")
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -54,16 +70,20 @@ class ViewController: UIViewController,UITextFieldDelegate {
     @IBAction func amountEditing(sender: UITextField) {
         // make sure the dot only appears at most once
         var dotCount:Int = 0
-        for c in Array(amountTextField.text) {
-            if (c == "."){
+        var text = Array(amountTextField.text)
+        var lastDotIndex = 0;
+        for (var i = 0; i < text.count; ++i){
+            if (text[i] == "."){
                 dotCount += 1
+                lastDotIndex = i;
             }
         }
         if (dotCount > 1){
-            amountTextField.text.removeAtIndex(amountTextField.text.endIndex.predecessor())
+            amountTextField.text.removeAtIndex(advance(amountTextField.text.startIndex,lastDotIndex))
             return
         }
         self.calculateTips()
+        self.saveUserData()
     }
     
     @IBAction func tipSliderValueChanged(sender: UISlider) {
