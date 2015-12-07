@@ -34,8 +34,8 @@ class ViewController: UIViewController,UITextFieldDelegate {
     }
     func setup(){
         //restore the default tip
-        var defaultTip:Int = userData.integerForKey("tip")
-        var segmentIndex:Int = (defaultTip - 10) / 5
+        let defaultTip:Int = userData.integerForKey("tip")
+        let segmentIndex:Int = (defaultTip - 10) / 5
         tipSegments.selectedSegmentIndex = segmentIndex
         tipSegments.sendAction("tipSegmentsValueChanged:", to: self, forEvent: nil)
         //restore old amount
@@ -60,17 +60,17 @@ class ViewController: UIViewController,UITextFieldDelegate {
     }
     func calculateTips(){
         // do the calculation
-        let amount:Double = (amountTextField.text as NSString).doubleValue
+        let amount:Double = (amountTextField.text! as NSString).doubleValue
         let percentage:Double = (tipPercentageLabel.text! as NSString).doubleValue
         let tip:Double = amount * percentage / 100
         tipAmountLabel.text = "$ " + String(format:"%.2f", tip)
-        let total:Double = (amountTextField.text as NSString).doubleValue + tip
+        let total:Double = (amountTextField.text! as NSString).doubleValue + tip
         totalLabel.text = "$ " + String(format:"%.2f",total)
     }
     @IBAction func amountEditing(sender: UITextField) {
         // make sure the dot only appears at most once
         var dotCount:Int = 0
-        var text = Array(amountTextField.text)
+        var text = Array(amountTextField.text!.characters)
         var lastDotIndex = 0;
         for (var i = 0; i < text.count; ++i){
             if (text[i] == "."){
@@ -79,7 +79,7 @@ class ViewController: UIViewController,UITextFieldDelegate {
             }
         }
         if (dotCount > 1){
-            amountTextField.text.removeAtIndex(advance(amountTextField.text.startIndex,lastDotIndex))
+            amountTextField.text!.removeAtIndex(amountTextField.text!.startIndex.advancedBy(lastDotIndex))
             return
         }
         self.calculateTips()

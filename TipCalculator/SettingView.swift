@@ -59,7 +59,7 @@ class SettingView: FXBlurView {
         container.addBoundaryWithIdentifier("upper", fromPoint: CGPointMake(0, -self.frame.size.height + 40), toPoint: CGPointMake(boundaryWidth, -self.frame.size.height + 40))
         
         let boundaryHeight = UIScreen.mainScreen().bounds.size.height
-        container.addBoundaryWithIdentifier("lower", fromPoint: CGPointMake(0, boundaryHeight/1.5), toPoint: CGPointMake(boundaryWidth, boundaryHeight/1.5))
+        container.addBoundaryWithIdentifier("lower", fromPoint: CGPointMake(0, boundaryHeight/1.45), toPoint: CGPointMake(boundaryWidth, boundaryHeight/1.45))
         
         
     }
@@ -76,7 +76,9 @@ class SettingView: FXBlurView {
         }else if pan.state == .Began {
             snapToBottom()
         }else{
-            animator.removeBehavior(snap)
+            if snap != nil{
+                animator.removeBehavior(snap)
+            }
             snap = UISnapBehavior(item: self, snapToPoint: CGPointMake(CGRectGetMidX(movement), CGRectGetMidY(movement)))
             animator.addBehavior(snap)
         }
@@ -117,7 +119,7 @@ class SettingView: FXBlurView {
     }
     
     
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         self.tintColor = UIColor.clearColor()
         
