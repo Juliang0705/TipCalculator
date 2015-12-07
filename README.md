@@ -33,7 +33,7 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-Only works for iPhone 6 4.7 inches screen size
+Only works for iPhone 6 5.5 inches screen size
 
 ## License
 
